@@ -42,6 +42,7 @@ int helloWindow() {
     }
 
     glfwTerminate();
+    return 0;
 }
 
 
