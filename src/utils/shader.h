@@ -24,7 +24,7 @@ public:
     void setFloat(const std::string &name, float value) const;
 
 private:
-    void checkComileErrors(unsigned int shader, std::string type);
+    void checkCompileErrors(unsigned int shader, std::string type);
 };
 
 #endif
