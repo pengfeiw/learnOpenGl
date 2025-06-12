@@ -1,15 +1,15 @@
 #include <iostream>
-#include "helloTexture.h"
 #include <stb_image/stb_image.h>
 #include <utils/shader.h>
 #include <filesystem>
+#include "helloTexture2.h"
 
-namespace hello_texture {
+namespace hello_texture2 {
 	// settings
 	const unsigned int SCR_WIDTH = 800;
 	const unsigned int SCR_HEIGHT = 600;
 
-	int helloTexture()
+	int helloTexture2()
 	{
 		// glfw: initialize and configure
 		// ------------------------------
@@ -44,7 +44,7 @@ namespace hello_texture {
 
 		// build and compile our shader zprogram
 		// ------------------------------------
-		Shader ourShader("resources/shaders/hello_texture.vs", "resources/shaders/hello_texture.fs");
+		Shader ourShader("resources/shaders/hello_texture2.vs", "resources/shaders/hello_texture2.fs");
 
 		// set up vertex data (and buffer(s)) and configure vertex attributes
 		// ------------------------------------------------------------------
@@ -82,34 +82,13 @@ namespace hello_texture {
 		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 		glEnableVertexAttribArray(2);
 
-
 		// load and create a texture 
 		// -------------------------
-		unsigned int texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-		// set the texture wrapping parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		// set texture filtering parameters
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// load image, create texture and generate mipmaps
-		int width, height, nrChannels;
-		unsigned char* data = stbi_load("resources/imgs/container.jpg", &width, &height, &nrChannels, 0);
-		std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture" << std::endl;
-		}
-		stbi_image_free(data);
+		unsigned int texture1 = createTexture("resources/imgs/container.jpg", GL_RGB);
+		unsigned int texture2 = createTexture("resources/imgs/awesomeface.png", GL_RGBA);
 
-
+		ourShader.setInt("texture1", 0);
+		ourShader.setInt("texture2", 1);
 		// render loop
 		// -----------
 		while (!glfwWindowShouldClose(window))
@@ -123,11 +102,15 @@ namespace hello_texture {
 			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			// bind Texture
-			glBindTexture(GL_TEXTURE_2D, texture);
-
 			// render container
 			ourShader.use();
+
+			// bind Texture
+			glActiveTexture(GL_TEXTURE0);
+			glBindTexture(GL_TEXTURE_2D, texture1);
+			glActiveTexture(GL_TEXTURE1);
+			glBindTexture(GL_TEXTURE_2D, texture2);
+
 			glBindVertexArray(VAO);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -164,5 +147,33 @@ namespace hello_texture {
 		// make sure the viewport matches the new window dimensions; note that width and 
 		// height will be significantly larger than specified on retina displays.
 		glViewport(0, 0, width, height);
+	}
+
+	int createTexture(const char* imgPath, GLenum format) {
+		// load and create a texture 
+		// -------------------------
+		unsigned int texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+		// set the texture wrapping parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		// set texture filtering parameters
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		// load image, create texture and generate mipmaps
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(imgPath, &width, &height, &nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			std::cout << "Failed to load texture" << std::endl;
+		}
+		stbi_image_free(data);
+		return texture;
 	}
 }
