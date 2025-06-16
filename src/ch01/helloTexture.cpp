@@ -2,7 +2,6 @@
 #include "helloTexture.h"
 #include <stb_image/stb_image.h>
 #include <utils/shader.h>
-#include <filesystem>
 
 namespace hello_texture {
 	// settings
@@ -97,7 +96,6 @@ namespace hello_texture {
 		// load image, create texture and generate mipmaps
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load("resources/imgs/container.jpg", &width, &height, &nrChannels, 0);
-		std::cout << "Current working directory: " << std::filesystem::current_path() << std::endl;
 		if (data)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);

@@ -10,6 +10,6 @@ namespace hello_texture2 {
 
 	int helloTexture2();
 
-	int createTexture(const char*, GLenum format);
+	void createTexture(unsigned int& texture, const char*, GLenum format);
 }
 #endif 
