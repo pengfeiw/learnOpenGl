@@ -4,9 +4,10 @@
 //#include <ch01/helloShader.h>
 //#include <ch01/helloShader2.h>
 //#include <ch01/helloTexture.h>
-#include <ch01/helloTexture2.h>
+//#include <ch01/helloTexture2.h>
+#include <ch01/helloTransform.h>
 
 int main() {
-	return hello_texture2::helloTexture2();
+	hello_transform::helloTransform();
 }
 

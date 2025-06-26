@@ -88,7 +88,7 @@ namespace hello_texture2 {
 		createTexture(texture2, "resources/imgs/awesomeface.png", GL_RGBA);
 
 		//ourShader.setInt("texture1", 0);
-		ourShader.use();
+		ourShader.use(); // 在设置 uniform 变量之前，必须激活对应的着色器程序，因为 glUniform* 方法是针对当前激活的着色器程序对象的
 
 		glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
 		ourShader.setInt("texture2", 1);
